@@ -62,7 +62,119 @@ class Menu{
         }
 };
 
+struct Elem2
+{int data;
+string name;
+Elem2* next;
+Elem2* prev;
+};
+class dvynaprav{
+public:
+	dvynaprav();
+	Elem2*first;
+	void addfront2();
+	bool Print2();
+	void addback2();
+	bool  delbydata2();
+	bool addser2();
+};
+
+dvynaprav::dvynaprav(){
+	first=NULL;
+}
+
+void dvynaprav::addfront2()//добавление вперед
+{int d;
+cout<<"Введите индекс массива"<<endl;
+cin>>d;
+string nam;
+cout<<"Введите поле name"<<endl;
+cin>>nam;
+Elem2*n=new Elem2;
+n->prev=NULL;
+if(!first){
+	n->next=NULL;
+first=n;}
+else{Elem2* f=first;
+n->next=f;
+f->prev=n;
+first=n;}
+n->data=d;
+n->name=nam;
+}
+bool dvynaprav::Print2()
+{if(first==NULL){
+	cout<<"пустой список";
+	return false;
+}
+	Elem2*q=first;
+	while(q){
+		cout<<q->data<<"\t"<<q->name<<endl;
+		q=q->next;}
+cout<<endl<<endl;
+return true;
+}
+bool dvynaprav::delbydata2() //удаляем по ID
+{Elem2*n=new Elem2;
+if(!first){
+	cout<<"пустой список";
+	return false;}
+cout<<"Введите id для поиска"<<endl;
+int search;
+cin >>search;
+Elem2* q=first;
+while(q){
+	if(q->data==search){
+		if(q==first){
+			if(q->next)
+				q->next->prev=NULL;
+			first=q->next;
+			delete q;
+			return true;
+	}
+	if(!q->next){ //последний
+		q->prev->next=NULL;
+	delete q;
+	return true;}
+	q->prev->next=q->next;
+	q->next->prev=q->prev;
+	delete q;
+	return true;}
+	q=q->next;
+}
+return false;}
+bool dvynaprav::addser2()//добавляем в середину после заданного ID двунаправленый ленейный
+{if(first==NULL){
+	cout<<"пустой список";
+	return false;}
+cout<<"Введите id для поиска"<<endl;
+int search;
+cin >>search;
+Elem2* cur=first;
+while (cur->data!=search)
+	cur=cur->next;
+if(cur->data==search)
+{
+	int d;
+	cout<<"Введите индекс массива"<<endl;
+	cin>>d;
+	string nam;
+	cout<<"Введите поле name"<<endl;
+	cin>>nam;
+	Elem2* n= new Elem2;
+	n->data=d;
+	n->name=nam;
+	n->next=cur->next;
+	n->prev=cur;
+	cur->next->prev=n;
+	cur->next=n;
+	return true;}
+return false;
+}
+
+
 int main() {
+    dvynaprav *spisok=new dvynaprav;
 Menu *MainMenu= new Menu; //строки
 	MainMenu->Add("1. Files");
     MainMenu->Add("2. Show");
@@ -256,9 +368,9 @@ break;
                     MainMenu->Print();
             break;
 
-/*case 10:
+case 10:
 //--------------------------Вход в подменю "Показать"------------
-            case 1:
+           /* case 1:
             system("clear");
             cout << "Show menu:";
             ShowMenu->Push(selected_item_s);
@@ -308,10 +420,17 @@ break;
            break;
 
 
-
-
 */
-case 10:
+case 1: // подменю просмотра
+system("clear");
+cout<<"********* this is show *******";
+cout<<endl;
+cout<<endl;
+spisok->Print2(); //вызов показа
+ break;
+
+
+//case 10:
 //------------------------------Вход в подменю "добавить"-------------------------
 
             case 2:
@@ -353,6 +472,29 @@ break;
                         cout << "Main menu:";
                         MainMenu->Print();
                         break;
+                        case 0:
+                        system("clear");
+                        //cout << "Main menu:";
+                        spisok->addfront2();
+                        getchar();
+                        system("clear");
+                         cout << "Add menu:";
+                        AddMenu->Print();
+                        break;
+                        /*case 1:
+                        system("clear");
+                        cout << "Main menu:";
+                        break; */
+                        case 2:
+                        system("clear");
+                       // cout << "Main menu:";
+                        spisok->addser2();
+                        getchar();
+                         system("clear");
+                          cout << "Add menu:";
+                        AddMenu->Print();
+                        break;
+
                         }
                         break;
                     }
@@ -450,6 +592,14 @@ break;
 
                         case 10:
                         switch(selected_item_d){//Exit to main menu
+                            case 1:
+                            system("clear");
+                            spisok->delbydata2();
+                            getchar();
+                            system("clear");
+                            cout<< "Delete menu:";
+                            DeleteMenu->Print();
+                            break;
                         case 2:
                         system("clear");
                         cout << "Main menu:";

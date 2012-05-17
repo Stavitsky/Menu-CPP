@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <stdio.h>
+#include <fstream>
 
 using namespace std;
 int const lim=6; // количество строк
@@ -69,6 +70,8 @@ Elem2* next;
 Elem2* prev;
 };
 class dvynaprav{
+    int idclass;
+    int Count;
 public:
 	dvynaprav();
 	Elem2*first;
@@ -77,12 +80,20 @@ public:
 	void addback2();
 	bool  delbydata2();
 	bool addser2();
+	void loadfile();
+    void savefile();
+    void Mkol(int a);
+    int Kol();
+    void addnum(string Str, int Num);
+     void Del(); // Удаление элемента, удаляется головной элемент
+    void DelAll();// Гепоцид
 };
 
 dvynaprav::dvynaprav(){
+    idclass=0;
 	first=NULL;
+	Count=0;
 }
-
 void dvynaprav::addfront2()//добавление вперед
 {int d;
 cout<<"Введите индекс массива"<<endl;
@@ -172,6 +183,73 @@ if(cur->data==search)
 return false;
 }
 
+void dvynaprav::addnum(string Str, int Num){
+Elem2 *n= first;
+Elem2 *added = new Elem2;
+if(n==NULL){
+first=added;
+}
+else {
+while(n->next!= NULL)
+{
+    n=n->next;
+}
+    n->next=added;
+}
+added->next=NULL;
+added->name=Str;
+added->data=Num;
+}
+
+int dvynaprav::Kol(){
+return idclass;
+}
+void dvynaprav::Mkol(int a){
+idclass=a;
+}
+
+void dvynaprav::Del(){
+    if (Count>0) Count--;
+        if(first!= NULL){
+
+    Elem2 *n=first;
+    first=first->next;
+    delete n;
+    }
+}
+void dvynaprav::DelAll(){
+    while(first!=0){
+    Del();
+}
+}
+void dvynaprav::loadfile(){
+this->DelAll();
+ifstream out ("base.bin", ios::binary);
+int kol;
+out>>kol;
+this->Mkol(kol);
+while (!out.eof()){
+string Str;
+
+int cur;
+out>>Str;
+out>>cur;
+this->addnum(Str, cur);
+}
+out.close();
+}
+
+void dvynaprav::savefile(){
+ofstream to ("base.bin", ios::binary);
+to<<this->Kol();
+Elem2 *n=first;
+while (n){
+to<<n->name<<' ';
+to<<n->data;
+n=n->next;
+}
+to.close();
+}
 
 int main() {
     dvynaprav *spisok=new dvynaprav;
@@ -187,9 +265,6 @@ Menu *MainMenu= new Menu; //строки
     FileMenu->Add("1. Open file");
     FileMenu->Add("2. Save changes");
     FileMenu->Add("3. Back to main menu");
-
- /*   Menu *ShowMenu= new Menu;
-    ShowMenu->Add("1.Back to main menu");*/
 
     Menu *AddMenu= new Menu;
     AddMenu->Add("1. Add in top");
@@ -214,7 +289,6 @@ Menu *MainMenu= new Menu; //строки
 
 	int selected_item = 0;
 	int selected_item_f = 0;
-	//int selected_item_s = 0;
 	int selected_item_a = 0;
 	int selected_item_d = 0;
 	int selected_item_e = 0;
@@ -349,6 +423,12 @@ case 10: //enter
                         //break;
                         case 10:
                         switch(selected_item_f){//выход в главное
+                            case 0:
+                            spisok->loadfile();
+                            break;
+                            case 1:
+                            spisok->savefile();
+                            break;
                         case 2:
                         system("clear");
                         cout << "Main menu:";
@@ -369,58 +449,7 @@ break;
             break;
 
 case 10:
-//--------------------------Вход в подменю "Показать"------------
-           /* case 1:
-            system("clear");
-            cout << "Show menu:";
-            ShowMenu->Push(selected_item_s);
-            ShowMenu->Print();
-            do  {
-                    a=getch();
-                    switch (a) {
-                    case 65://вверх
-                        system("clear");
-                        cout << "Add menu:";
-                        selected_item_s--;
-                        if(selected_item_s<0){
-                            selected_item_s=AddMenu->Sum()-1;
-                        }
 
-                        AddMenu->Push(selected_item_s);
-                        AddMenu->Print();
-
-                    break;
-                    case 66://вниз
-                        system("clear");
-                        cout << "Add menu:";
-                        selected_item_s++;
-                        if(selected_item_s>AddMenu->Sum()-1){
-                            selected_item_s=0;
-                        }
-
-                        AddMenu->Push(selected_item_s);
-                        AddMenu->Print();
-break;
-
-                        case 10:
-                        switch(selected_item_s){//Exit to main menu
-                        case 1:
-                        system("clear");
-                        cout << "Main menu:";
-                        MainMenu->Print();
-                        break;
-                        }
-                        break;
-                    }
-                    }
-                    while ((a!=10 || selected_item_a!=1)&& a!=113);
-                    system("clear");
-                    cout<<"Main menu:";
-                    MainMenu->Print();
-           break;
-
-
-*/
 case 1: // подменю просмотра
 system("clear");
 cout<<"********* this is show *******";
